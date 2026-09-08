@@ -70,6 +70,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Fly",
+                    "type": "Button",
+                    "id": "23e1951f-8d19-4399-bc6d-80ed7a393139",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Boost",
                     "type": "Button",
                     "id": "6568e2f0-0fa9-43a4-a701-4ff2ccb0136e",
@@ -209,6 +218,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e56f51ef-47b7-4d43-bda7-897fd73d56ec",
+                    "path": "<Keyboard>/space",
+                    "interactions": "Hold(duration=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fly",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
