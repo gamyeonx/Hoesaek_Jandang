@@ -578,8 +578,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerState
   _moveSpeed: 5
   _jumpForce: 7
-  _flySpeed: 2
-  _flyHeight: 5
+  _flySpeed: 2.5
+  _flyHeight: 4
+  _dashSpeed: 12
+  _dashDuration: 0.2
+  _boostSpeed: 9
 --- !u!114 &1794489866
 MonoBehaviour:
   m_ObjectHideFlags: 0

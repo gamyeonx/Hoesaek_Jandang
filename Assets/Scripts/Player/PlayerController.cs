@@ -10,11 +10,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody;
     [Tooltip("이 PlayerController가 붙어있는 GameObject의 PlayerState")]
     [SerializeField] private PlayerState _playerState;
-    
+
     private Vector2 _moveInput;
 
     private bool _isFlying;
     private float _flyStartY;
+
+    private bool _isDashing;
+    private float _dashDirection;
+    private float _dashTimer;
+
+    private bool _isBoosting;
 
     #region 유니티 생명주기 함수
     private void Awake()
@@ -31,10 +37,15 @@ public class PlayerController : MonoBehaviour
         _playerInputActions.Player.Jump.canceled += OnPlayerJumpCancel;
         _playerInputActions.Player.Fly.performed += OnPlayerFly;
         _playerInputActions.Player.Fly.canceled += OnPlayerFlyCancel;
+        _playerInputActions.Player.Dash.performed += OnPlayerDash;
+        _playerInputActions.Player.Boost.performed += OnPlayerBoost;
+        _playerInputActions.Player.Boost.canceled += OnPlayerBoostCancel;
     }
 
     private void FixedUpdate()
     {
+        if (_isDashing) PlayerDash();
+
         PlayerMove();
 
         if (_isFlying) PlayerFly();
@@ -48,6 +59,9 @@ public class PlayerController : MonoBehaviour
         _playerInputActions.Player.Jump.canceled -= OnPlayerJumpCancel;
         _playerInputActions.Player.Fly.performed -= OnPlayerFly;
         _playerInputActions.Player.Fly.canceled -= OnPlayerFlyCancel;
+        _playerInputActions.Player.Dash.performed -= OnPlayerDash;
+        _playerInputActions.Player.Boost.performed -= OnPlayerBoost;
+        _playerInputActions.Player.Boost.canceled -= OnPlayerBoostCancel;
         _playerInputActions.Disable();
     }
     #endregion
@@ -72,7 +86,11 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerMove()
     {
-        _rigidbody.linearVelocity = new Vector2(_moveInput.x * _playerState.MoveSpeed, _rigidbody.linearVelocity.y);
+        if (_isDashing) return;
+
+        float moveSpeed = _isBoosting ? _playerState.BoostSpeed : _playerState.MoveSpeed;
+
+        _rigidbody.linearVelocity = new Vector2(_moveInput.x * moveSpeed, _rigidbody.linearVelocity.y);
     }
     #endregion
 
@@ -118,6 +136,46 @@ public class PlayerController : MonoBehaviour
         }
 
         _rigidbody.gravityScale = 0f;
+    }
+    #endregion
+
+    #region 플레이어 대쉬
+    private void OnPlayerDash(InputAction.CallbackContext ctx)
+    {
+        float direction = _moveInput.x;
+
+        if (direction == 0f || _isDashing)
+        {
+            return;
+        }
+
+        _isDashing = true;
+        _dashDirection = direction;
+        _dashTimer = _playerState.DashDuration;
+    }
+
+    private void PlayerDash()
+    {
+        _rigidbody.linearVelocity = new Vector2(_dashDirection * _playerState.DashSpeed, _rigidbody.linearVelocity.y);
+
+        _dashTimer -= Time.fixedDeltaTime;
+
+        if (_dashTimer <= 0f)
+        {
+            _isDashing = false;
+        }
+    }
+    #endregion
+
+    #region 플레이어 부스트
+    private void OnPlayerBoost(InputAction.CallbackContext ctx)
+    {
+        _isBoosting = true;
+    }
+
+    private void OnPlayerBoostCancel(InputAction.CallbackContext ctx)
+    {
+        _isBoosting = false;
     }
     #endregion
 }

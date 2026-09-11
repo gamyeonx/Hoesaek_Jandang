@@ -79,6 +79,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "65c00580-4f40-498a-a895-f0fd5dea8abb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Boost",
                     "type": "Button",
                     "id": "6568e2f0-0fa9-43a4-a701-4ff2ccb0136e",
@@ -115,7 +124,7 @@
                     "name": "",
                     "id": "3c72477b-c7b1-4d3c-8062-bbbafb7898b6",
                     "path": "<Keyboard>/leftShift",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "Boost",
@@ -229,6 +238,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Fly",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a41b2254-a6e6-4fda-a9d1-572d39924976",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
