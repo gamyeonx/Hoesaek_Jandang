@@ -164,10 +164,7 @@ public class PlayerController : MonoBehaviour
     {
         float direction = _moveInput.x;
 
-        if (direction == 0f || _isDashing)
-        {
-            return;
-        }
+        if (direction == 0f || _isDashing) return;
 
         _isDashing = true;
         _dashDirection = direction;
@@ -180,10 +177,7 @@ public class PlayerController : MonoBehaviour
 
         _dashTimer -= Time.fixedDeltaTime;
 
-        if (_dashTimer <= 0f)
-        {
-            _isDashing = false;
-        }
+        if (_dashTimer <= 0f) _isDashing = false;
     }
     #endregion
 
@@ -201,10 +195,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (_groundCheck == null)
-        {
-            return;
-        }
+        if (_groundCheck == null) return;
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(_groundCheck.position, _groundCheckSize);
