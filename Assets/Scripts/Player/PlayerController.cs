@@ -10,16 +10,32 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody;
     [Tooltip("이 PlayerController가 붙어있는 GameObject의 PlayerState")]
     [SerializeField] private PlayerState _playerState;
+    
+    // 플레이어 점프 관련
+    [Header("점프 가능 레이어를 설정하세요")]
+    [Tooltip("점프를 허용할 레이어를 설정하세요")]
+    [SerializeField] private LayerMask _jumpableLayer;
+    
+    [Header("점프 판정")]
+    [Tooltip("플레이어의 발밑 점프 판정을 담당하는 오브젝트를 참조하세요")]
+    [SerializeField] private Transform _groundCheck;
+    [Tooltip("점프 판정 영역의 크기를 설정하세요")]
+    [SerializeField] private Vector2 _groundCheckSize;
 
+
+    // 플레이어 이동 관련
     private Vector2 _moveInput;
 
+    // 플레이어 비행 관련
     private bool _isFlying;
     private float _flyStartY;
 
+    // 플레이어 대쉬 관련
     private bool _isDashing;
     private float _dashDirection;
     private float _dashTimer;
 
+    // 플레이어 부스트 관련
     private bool _isBoosting;
 
     #region 유니티 생명주기 함수
@@ -97,6 +113,10 @@ public class PlayerController : MonoBehaviour
     #region 플레이어 점프
     private void OnPlayerJump(InputAction.CallbackContext ctx)
     {
+        Collider2D collider = Physics2D.OverlapBox(_groundCheck.position, _groundCheckSize, 0f, _jumpableLayer);
+
+        if (collider == null) return;
+
         _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _playerState.JumpForce);
     }
 
@@ -178,4 +198,15 @@ public class PlayerController : MonoBehaviour
         _isBoosting = false;
     }
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        if (_groundCheck == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(_groundCheck.position, _groundCheckSize);
+    }
 }
