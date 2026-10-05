@@ -10,12 +10,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody;
     [Tooltip("이 PlayerController가 붙어있는 GameObject의 PlayerState")]
     [SerializeField] private PlayerState _playerState;
-    
+
     // 플레이어 점프 관련
     [Header("점프 가능 레이어를 설정하세요")]
     [Tooltip("점프를 허용할 레이어를 설정하세요")]
     [SerializeField] private LayerMask _jumpableLayer;
-    
+
     [Header("점프 판정")]
     [Tooltip("플레이어의 발밑 점프 판정을 담당하는 오브젝트를 참조하세요")]
     [SerializeField] private Transform _groundCheck;
@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour
 
     // 플레이어 이동 관련
     private Vector2 _moveInput;
+    private bool _isLeftPressed;
+    private bool _isRightPressed;
+    private bool _isRightPriority;
 
     // 플레이어 비행 관련
     private bool _isFlying;
@@ -47,8 +50,12 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         _playerInputActions.Enable();
-        _playerInputActions.Player.Move.performed += OnPlayerMove;
-        _playerInputActions.Player.Move.canceled += OnPlayerMoveCancel;
+
+        _playerInputActions.Player.MoveLeft.started += OnPlayerMoveLeft;
+        _playerInputActions.Player.MoveLeft.canceled += OnPlayerMoveLeftCancel;
+        _playerInputActions.Player.MoveRight.started += OnPlayerMoveRight;
+        _playerInputActions.Player.MoveRight.canceled += OnPlayerMoveRightCancel;
+
         _playerInputActions.Player.Jump.performed += OnPlayerJump;
         _playerInputActions.Player.Jump.canceled += OnPlayerJumpCancel;
         _playerInputActions.Player.Fly.performed += OnPlayerFly;
@@ -69,8 +76,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnDisable()
     {
-        _playerInputActions.Player.Move.performed -= OnPlayerMove;
-        _playerInputActions.Player.Move.canceled -= OnPlayerMoveCancel;
+        _playerInputActions.Player.MoveLeft.started -= OnPlayerMoveLeft;
+        _playerInputActions.Player.MoveLeft.canceled -= OnPlayerMoveLeftCancel;
+        _playerInputActions.Player.MoveRight.started -= OnPlayerMoveRight;
+        _playerInputActions.Player.MoveRight.canceled -= OnPlayerMoveRightCancel;
+
         _playerInputActions.Player.Jump.performed -= OnPlayerJump;
         _playerInputActions.Player.Jump.canceled -= OnPlayerJumpCancel;
         _playerInputActions.Player.Fly.performed -= OnPlayerFly;
@@ -78,6 +88,7 @@ public class PlayerController : MonoBehaviour
         _playerInputActions.Player.Dash.performed -= OnPlayerDash;
         _playerInputActions.Player.Boost.performed -= OnPlayerBoost;
         _playerInputActions.Player.Boost.canceled -= OnPlayerBoostCancel;
+
         _playerInputActions.Disable();
     }
     #endregion
@@ -90,14 +101,54 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region 플레이어 이동
-    private void OnPlayerMove(InputAction.CallbackContext ctx)
+    private void OnPlayerMoveLeft(InputAction.CallbackContext ctx)
     {
-        _moveInput = new Vector2(ctx.ReadValue<Vector2>().x, 0f);
+        _isLeftPressed = true;
+        _isRightPriority = false;
+
+        UpdateMoveInput();
     }
 
-    private void OnPlayerMoveCancel(InputAction.CallbackContext ctx)
+    private void OnPlayerMoveLeftCancel(InputAction.CallbackContext ctx)
     {
-        _moveInput = Vector2.zero;
+        _isLeftPressed = false;
+
+        UpdateMoveInput();
+    }
+
+    private void OnPlayerMoveRight(InputAction.CallbackContext ctx)
+    {
+        _isRightPressed = true;
+        _isRightPriority = true;
+
+        UpdateMoveInput();
+    }
+
+    private void OnPlayerMoveRightCancel(InputAction.CallbackContext ctx)
+    {
+        _isRightPressed = false;
+
+        UpdateMoveInput();
+    }
+
+    private void UpdateMoveInput()
+    {
+        if (_isLeftPressed && _isRightPressed)
+        {
+            _moveInput = _isRightPriority ? Vector2.right : Vector2.left;
+        }
+        else if (_isLeftPressed)
+        {
+            _moveInput = Vector2.left;
+        }
+        else if (_isRightPressed)
+        {
+            _moveInput = Vector2.right;
+        }
+        else
+        {
+            _moveInput = Vector2.zero;
+        }
     }
 
     private void PlayerMove()
