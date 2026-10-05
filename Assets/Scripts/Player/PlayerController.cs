@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
     [Tooltip("이 PlayerController가 붙어있는 GameObject의 PlayerState")]
     [SerializeField] private PlayerState _playerState;
 
+    // 플레이어 공격 관련
+    [Tooltip("이 PlayerController가 붙어있는 GameObject의 PlayerCombat")]
+    [SerializeField] private PlayerCombat _playerCombat;
+    
     // 플레이어 점프 관련
     [Header("점프 가능 레이어를 설정하세요")]
     [Tooltip("점프를 허용할 레이어를 설정하세요")]
@@ -56,6 +60,9 @@ public class PlayerController : MonoBehaviour
         _playerInputActions.Player.MoveRight.started += OnPlayerMoveRight;
         _playerInputActions.Player.MoveRight.canceled += OnPlayerMoveRightCancel;
 
+        _playerInputActions.Player.Attack1.performed += OnPlayerAttack1;
+        _playerInputActions.Player.Attack2.performed += OnPlayerAttack2;
+
         _playerInputActions.Player.Jump.performed += OnPlayerJump;
         _playerInputActions.Player.Jump.canceled += OnPlayerJumpCancel;
         _playerInputActions.Player.Fly.performed += OnPlayerFly;
@@ -80,6 +87,9 @@ public class PlayerController : MonoBehaviour
         _playerInputActions.Player.MoveLeft.canceled -= OnPlayerMoveLeftCancel;
         _playerInputActions.Player.MoveRight.started -= OnPlayerMoveRight;
         _playerInputActions.Player.MoveRight.canceled -= OnPlayerMoveRightCancel;
+
+        _playerInputActions.Player.Attack1.performed -= OnPlayerAttack1;
+        _playerInputActions.Player.Attack2.performed -= OnPlayerAttack2;
 
         _playerInputActions.Player.Jump.performed -= OnPlayerJump;
         _playerInputActions.Player.Jump.canceled -= OnPlayerJumpCancel;
@@ -158,6 +168,18 @@ public class PlayerController : MonoBehaviour
         float moveSpeed = _isBoosting ? _playerState.BoostSpeed : _playerState.MoveSpeed;
 
         _rigidbody.linearVelocity = new Vector2(_moveInput.x * moveSpeed, _rigidbody.linearVelocity.y);
+    }
+    #endregion
+
+    #region 플레이어 공격
+    private void OnPlayerAttack1(InputAction.CallbackContext ctx)
+    {
+        _playerCombat?.AttackSlot1();
+    }
+
+    private void OnPlayerAttack2(InputAction.CallbackContext ctx)
+    {
+        _playerCombat?.AttackSlot2();
     }
     #endregion
 
